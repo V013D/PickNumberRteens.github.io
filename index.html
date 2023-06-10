@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Random Number Generator</title>
+    <style>
+        body {
+            background-color: #202020;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        
+        .image-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #303030;
+            text-align: center;
+            margin: 20px;
+            padding: 20px;
+        }
+        
+        .image-section img {
+            width: 400px;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        
+        .section input[type="text"],
+        .section input[type="button"] {
+            color: #000000;
+            font-size: 16px;
+            margin: 10px;
+            text-align: center;
+        }
+        
+        .section label,
+        .section p {
+            color: #ffffff;
+            font-size: 16px;
+            margin: 10px;
+        }
+        
+        .toggle-switch {
+            margin: 20px;
+            text-align: center;
+        }
+        
+        .toggle-switch input[type="checkbox"] {
+            display: none;
+        }
+        
+        .toggle-switch label {
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 10px;
+            background-color: #303030;
+        }
+        
+        .toggle-switch input[type="checkbox"]:checked + label {
+            background-color: #ff0000;
+        }
+        
+        .toggle-switch input[type="checkbox"]:checked + label::after {
+            content: "OFF";
+            color: #ffffff;
+            margin-left: 5px;
+        }
+        
+        .toggle-switch input[type="checkbox"] + label::after {
+            content: "ON";
+            color: #ffffff;
+            margin-left: 5px;
+        }
+        
+        .top-corner-links {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .top-corner-links a {
+            color: #ffffff;
+            font-size: 16px;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .top-corner-links .reddit-link {
+            background-color: #ff4500;
+        }
+        
+        .top-corner-links .discord-link {
+            background-color: #7289DA;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <input type="text" id="ianName" placeholder="Your name here">
+            <input type="button" value="Generate" onclick="generateNumber('ian')">
+            <p id="ianResult">Number.</p>
+        </div>
+        
+        <div class="image-section">
+            <img src="https://i.redd.it/v9r7slvsnic31.png" alt="Random Image" id="randomImage">
+        </div>
+        
+        <div class="section">
+            <input type="text" id="toriName" placeholder="Your name here">
+            <input type="button" value="Generate" onclick="generateNumber('tori')">
+            <p id="toriResult">Number.</p>
+        </div>
+    </div>
+    
+    <div class="toggle-switch">
+        <input type="checkbox" id="nsfwToggle" onchange="toggleNSFW()">
+        <label for="nsfwToggle">NSFW</label>
+    </div>
+    
+    <div class="toggle-switch">
+        <input type="checkbox" id="redditToggle" onchange="toggleReddit()">
+        <label for="redditToggle">Reddit</label>
+    </div>
+    
+    <div class="top-corner-links">
+        <a href="https://www.reddit.com/r/teenagers/" class="reddit-link">r/teens Reddit</a>
+        <a href="https://discord.com/invite/teenagers" class="discord-link">r/teens Discord</a>
+    </div>
+    
+    <script>
+        var generatedNumbers = {
+            "ian": [],
+            "tori": []
+        };
+        
+        var isNSFWExcluded = false;
+        var isRedditExcluded = false;
+        
+        function generateRandomNumber(section) {
+            while (true) {
+                var number = Math.floor(Math.random() * 73) + 1;
+                if (
+                    (!isInRange(number) && number !== 73 && !generatedNumbers[section].includes(number))
+                    && (!isNSFWExcluded || (number < 57 || number > 67))
+                ) {
+                    generatedNumbers[section].push(number);
+                    return number;
+                }
+            }
+        }
+        
+        function isInRange(number) {
+            // Define the range to exclude here
+            return number >= 0 && number <= 0;
+        }
+        
+        function generateNumber(section) {
+            var randomNumber = generateRandomNumber(section);
+            if (section === "ian") {
+                document.getElementById("ianResult").textContent = "Random number: " + randomNumber;
+            } else if (section === "tori") {
+                document.getElementById("toriResult").textContent = "Random number: " + randomNumber;
+            }
+        }
+        
+        function toggleImageSize() {
+            var image = document.getElementById("randomImage");
+            var isEnlarged = image.dataset.isEnlarged === "true";
+            
+            if (!isEnlarged) {
+                var windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+                var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+                var imageWidth = image.naturalWidth;
+                var imageHeight = image.naturalHeight;
+                var aspectRatio = Math.min(windowWidth / imageWidth, windowHeight / imageHeight);
+                var newWidth = Math.floor(imageWidth * aspectRatio);
+                var newHeight = Math.floor(imageHeight * aspectRatio);
+                
+                image.style.width = newWidth + "px";
+                image.style.height = newHeight + "px";
+                image.style.marginBottom = "20px";
+                image.dataset.isEnlarged = "true";
+            } else {
+                image.style.width = "400px";
+                image.style.height = "400px";
+                image.style.marginBottom = "20px";
+                image.dataset.isEnlarged = "false";
+            }
+        }
+        
+        function toggleNSFW() {
+            var nsfwToggle = document.getElementById("nsfwToggle");
+            isNSFWExcluded = nsfwToggle.checked;
+            var nsfwLabel = document.getElementById("nsfwLabel");
+            
+            if (isNSFWExcluded) {
+                nsfwLabel.textContent = "NSFW is OFF";
+                nsfwLabel.style.color = "red";
+            } else {
+                nsfwLabel.textContent = "NSFW is ON";
+                nsfwLabel.style.color = "green";
+            }
+        }
+        
+        function toggleReddit() {
+            var redditToggle = document.getElementById("redditToggle");
+            isRedditExcluded = redditToggle.checked;
+            var redditLabel = document.getElementById("redditLabel");
+            
+            if (isRedditExcluded) {
+                redditLabel.textContent = "Reddit is OFF";
+                redditLabel.style.color = "red";
+            } else {
+                redditLabel.textContent = "Reddit is ON";
+                redditLabel.style.color = "green";
+            }
+        }
+        
+        document.getElementById("randomImage").addEventListener("click", toggleImageSize);
+        
+        toggleNSFW();
+        toggleReddit();
+    </script>
+</body>
+</html>
